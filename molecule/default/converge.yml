@@ -1,0 +1,12 @@
+---
+# yamllint disable rule:line-length
+- name: 'Default | converge'
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: 'Default | converge | apply UFW role'
+      ansible.builtin.include_role:
+        name: 'r_pufky.srv.ufw'
+      vars:
+        ufw_host:
+          - {proto: 'tcp', from_ip: 'any', to_port: 2222, direction: 'in', log: false, comment: 'host rule after group rule'}

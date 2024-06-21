@@ -1,0 +1,15 @@
+---
+###############################################################################
+# UFW Role Options
+###############################################################################
+
+# Last time UFW options were validated against a default configuration.
+ufw_role_validate_date: '2024-06-21'
+ufw_role_validate_release: 'bookworm'
+
+# Default packages for UFW.
+ufw_role_packages:
+  - 'ufw'
+
+# Default state for apt package installation. See ansible.builtin.apt.
+ufw_role_package_state: 'latest'

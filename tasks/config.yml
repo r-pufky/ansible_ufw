@@ -1,0 +1,95 @@
+---
+# yamllint disable rule:line-length
+- name: 'Config | enable'
+  when: ufw_enable
+  block:
+    - name: 'Config | enable | apply bug 990834 986493 workaround'
+      ansible.builtin.include_tasks: bug_990834_986493_workaround.yml
+      when: ufw_boot_timeout_workaround
+
+    - name: 'Config | enable | disable IPv6 support'
+      ansible.builtin.lineinfile:
+        path: '/etc/default/ufw'
+        regexp: '^IPV6=yes'
+        line: 'IPV6=no'
+        state: 'present'
+      register: _ufw_config
+      when: not ufw_ipv6_enable
+
+    - name: 'Config | enable | enable IPv6 support'
+      ansible.builtin.lineinfile:
+        path: '/etc/default/ufw'
+        regexp: '^IPV6=no'
+        line: 'IPV6=yes'
+        state: 'present'
+      register: _ufw_config
+      when: ufw_ipv6_enable
+
+    - name: 'Config | enable | reload for IP support changes'  # noqa no-handler execute immediately
+      community.general.ufw:
+        state: 'reloaded'
+      when: _ufw_config.changed
+
+    - name: 'Config | enable | purge existing configuration'
+      community.general.ufw:
+        state: 'reset'
+      when: ufw_purge
+
+    - name: 'Config | enable | disable for setup'
+      community.general.ufw:
+        state: 'disabled'
+      changed_when: false
+      when: ufw_disable_for_setup
+
+    - name: 'Config | enable | set global logging'
+      community.general.ufw:
+        logging: '{{ ufw_logging | default(false) }}'
+
+    - name: 'Config | enable | default allow outgoing connections'
+      community.general.ufw:
+        default: '{{ ufw_default_outgoing | default("allow") }}'
+        direction: 'outgoing'
+
+    - name: 'Config | enable | default deny incoming connections'
+      community.general.ufw:
+        default: '{{ ufw_default_incoming | default("deny") }}'
+        direction: 'incoming'
+
+    - name: 'Config | enable | set group rules'
+      community.general.ufw:
+        direction: '{% if "direction" in item %}{{ item.direction }}{% else %}in{% endif %}'
+        from_ip: '{% if "from_ip" in item %}{{ item.from_ip }}{% else %}any{% endif %}'
+        from_port: '{% if "from_port" in item %}{{ item.from_port }}{% endif %}'
+        to_ip: '{% if "to_ip" in item %}{{ item.to_ip }}{% else %}any{% endif %}'
+        to_port: '{% if "to_port" in item %}{{ item.to_port }}{% endif %}'
+        proto: '{% if "proto" in item %}{{ item.proto }}{% else %}tcp{% endif %}'
+        log: '{% if "log" in item %}{{ item.log }}{% else %}false{% endif %}'
+        comment: '{% if "comment" in item %}{{ item.comment }}{% else %}r_pufky.srv.ufw default group comment{% endif %}'
+        rule: 'allow'
+      loop: '{{ ufw_group }}'
+      when: ufw_group
+
+    - name: 'Config | enable | set host rules'
+      community.general.ufw:
+        direction: '{% if "direction" in item %}{{ item.direction }}{% else %}in{% endif %}'
+        from_ip: '{% if "from_ip" in item %}{{ item.from_ip }}{% else %}any{% endif %}'
+        from_port: '{% if "from_port" in item %}{{ item.from_port }}{% endif %}'
+        to_ip: '{% if "to_ip" in item %}{{ item.to_ip }}{% else %}any{% endif %}'
+        to_port: '{% if "to_port" in item %}{{ item.to_port }}{% endif %}'
+        proto: '{% if "proto" in item %}{{ item.proto }}{% else %}tcp{% endif %}'
+        log: '{% if "log" in item %}{{ item.log }}{% else %}false{% endif %}'
+        comment: '{% if "comment" in item %}{{ item.comment }}{% else %}r_pufky.srv.ufw default host comment{% endif %}'
+        rule: 'allow'
+      loop: '{{ ufw_host }}'
+      when: ufw_host
+
+    - name: 'Config | enable | enable post setup'
+      community.general.ufw:
+        state: 'enabled'
+      changed_when: false
+      when: ufw_disable_for_setup
+
+- name: 'Config | disable'
+  community.general.ufw:
+    state: 'disabled'
+  when: not ufw_enable

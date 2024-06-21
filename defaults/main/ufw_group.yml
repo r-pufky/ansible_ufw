@@ -1,0 +1,86 @@
+---
+# yamllint disable rule:line-length
+###############################################################################
+# UFW Firewall (Group Rules)
+###############################################################################
+# Group rules should be defined in group_vars for general rules to apply to all
+# systems. These are applied first, before ufw_host rules.
+#
+# UFW can handle IP and CIDR notation. Use 'any' for no restriction on specific
+# direction.
+#
+# Set IP to force connections through a proxy.
+#
+# ufw_group:
+#     list of dict definitions for simplified UFW rules.
+#   - proto: str - TCP/IP protocol
+#         Values:
+#            any: any protocol (default)
+#            tcp: TCP
+#            udp: UDP
+#           ipv6: IPv6
+#            esp: ESP (encapsulation security payload)
+#             ah: AH (authentication header)
+#            gre: GRE (generic route encapsulation)
+#           igmp: IGMP (internet group mamangement protocol)
+#       Default: 'tcp'.
+#     from_ip: str - source IPv4/IPv6 address
+#         Special Case:
+#            any: allow all addresses
+#           CIDR: CIDR network
+#       Default: 'any'.
+#     from_port: str - source port
+#         Special Case: ':' may be used for ranges (22:2222).
+#       Default: '' (any).
+#     to_ip: str - destination IPv4/IPv6 address
+#         Special Case:
+#            any: allow all addresses
+#           CIDR: CIDR network
+#       Default: 'any'.
+#     to_port: str - destination port
+#         Special Case: ':' may be used for ranges (22:2222).
+#       Default: '' (any).
+#     direction: str - direction for rule
+#         Values:
+#            in: incoming connections
+#           out: outgoing connections
+#       Default: 'in'.
+#     log: bool - log connections matching this rule
+#       Default: False.
+#     comment: str - rule description
+#       Default: ''.
+#
+# Examples:
+#   - proto: 'udp'
+#     from_ip: 'any'
+#     to_port: 123
+#     direction: 'in'
+#     log: true
+#     comment: 'allow any UDP inbound connections to 123'
+#   - proto: 'tcp'
+#     to_ip: 'any'
+#     to_port: 123
+#     direction: 'out'
+#     log: true
+#     comment: 'allouw any TCP outbound connections to 123'
+#   - proto: 'tcp'
+#     from_ip: '10.1.1.1'
+#     to_port: 5555
+#     direction: 'in'
+#     log: true
+#     comment: 'allow proxied inbound connections to port 5555'
+#   - proto: 'tcp'
+#     from_ip: '127.0.0.1'
+#     to_ip: '127.0.0.1'
+#     to_port: 123
+#     direction: 'in'
+#     log: false
+#     comment: 'allow localhost connections to port 123'
+#
+# Default: allow SSH.
+#   - {proto: 'tcp', from_ip: 'any', to_port: 22, direction: 'in', comment: 'ssh'}
+#
+# Reference:
+# * https://docs.ansible.com/ansible/latest/collections/community/general/ufw_module.html
+ufw_group:
+  - {proto: 'tcp', from_ip: 'any', to_port: 22, direction: 'in', comment: 'ssh'}

@@ -1,0 +1,86 @@
+---
+# yamllint disable rule:line-length
+###############################################################################
+# UFW Firewall
+###############################################################################
+# Manage UFW firewall and proxied firewall configuration.
+
+# Enable UFW. Default: True.
+ufw_enable: true
+
+# TODO(deprecated): submit public repository then remove (bookworm patched).
+# Use UFW boot infinite timeout workaround for wifi. Default: False.
+ufw_boot_timeout_workaround: false
+
+# Remove UFW boot infinit timeout workaround patch. Default: False.
+ufw_boot_timeout_workaround_unpatch: false
+
+# Enable IPv6 Support. Default: False.
+ufw_ipv6_enable: false
+
+# Default action for outgoing connections.
+#
+# Values:
+#    allow: allow connections
+#     deny: deny connections (dropped silently)
+#   reject: reject connections (destination unreachable)
+#
+# Default: 'allow'.
+ufw_default_outgoing: 'allow'
+
+# Default action for incoming connections.
+#
+# Values:
+#    allow: allow connections
+#     deny: deny connections (dropped silently)
+#   reject: reject connections (destination unreachable)
+#
+# Default: 'deny'.
+ufw_default_incoming: 'deny'
+
+# Set global UFW logging level.
+#
+# Logged to LOG_KERN syslog.
+#
+# Values:
+#       on: enable
+#      off: disable
+#      low: log blocked packets not matching the defined policy (with rate
+#           limiting), well as packets matching logged rules.
+#   medium: log level low, plus all allowed packets not matching the defined
+#           policy, all INVALID packets, and all new connections. All logging
+#           is done with rate limiting.
+#     high: log level medium (without rate limiting), plus all packets with
+#           rate limiting.
+#     full: log level high without rate limiting
+#
+# Default: 'low'.
+ufw_logging: 'low'
+
+# Disable UFW while modifying rules?
+#
+# May cause service interruptions/exposure.
+#
+# Disabling may resolve issues with underlying iptables not being set correctly
+# while UFW modifies them.
+#
+# Useful if switching between proxy/non-proxy connections:
+#
+#   ansible-playbook site.yml --extra-vars="ufw_disable_for_setup=true"
+#
+# Default: True.
+ufw_disable_for_setup: true
+
+# Purge all UFW rules before (re)creating them?
+#
+# May cause service interruptions/exposure.
+#
+# Will leave system with UFW disabled for a few seconds until base policy rules
+# are re-created.
+#
+# Useful if switching between proxy/non-proxy connections:
+#
+#   ansible-playbook site.yml --extra-vars="ufw_purge=true"
+#
+# Default: True.
+ufw_purge: true

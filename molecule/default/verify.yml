@@ -1,0 +1,47 @@
+---
+# yamllint disable rule:line-length
+# Confirm default settings are set to expected values and config loads without
+# error; and group rules are applied before host rules.
+- name: 'Default | verify | role defaults'
+  hosts: 'all'
+  gather_facts: false
+  tasks:
+    - name: 'Default | verify | role defaults | gather service status'
+      ansible.builtin.service_facts:
+      register: _test_ufw_service
+
+    - name: 'Default | verify | role defaults | assert service active'
+      ansible.builtin.assert:
+        that:
+          - '"ufw.service" in ansible_facts.services'
+        fail_msg: 'ufw service should be enabled.'
+
+    - name: 'Default | verify | role defaults | query service'
+      ansible.builtin.command: 'ufw status verbose'
+      changed_when: false
+      register: _test_ufw_status
+
+    - name: 'Default | verify | role defaults | assert active and ssh enabled'
+      ansible.builtin.assert:
+        that:
+          - '"deny (incoming)," in _test_ufw_status.stdout'
+          - '"allow (outgoing)," in _test_ufw_status.stdout'
+          - '"active" in _test_ufw_status.stdout'
+          - '"22/tcp" in _test_ufw_status.stdout'
+        fail_msg: 'UFW should be active with SSH allowed from anywhere.'
+
+- name: 'Default | verify | rule ordering'
+  hosts: 'all'
+  gather_facts: false
+  tasks:
+    - name: 'Default | verify | rule ordering | query service'
+      ansible.builtin.command: 'ufw status numbered'
+      changed_when: false
+      register: _test_ufw_status
+
+    - name: 'Default | verify | rule ordering | assert correct rule ordering'
+      ansible.builtin.assert:
+        that:
+          - '"[ 1] 22/tcp" in _test_ufw_status.stdout'
+          - '"[ 2] 2222/tcp" in _test_ufw_status.stdout'
+        fail_msg: 'Group rule TCP/22 should appear before Host rule TCP/2222.'
