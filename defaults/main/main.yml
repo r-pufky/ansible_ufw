@@ -8,13 +8,6 @@
 # Enable UFW. Default: True.
 ufw_enable: true
 
-# TODO(deprecated): submit public repository then remove (bookworm patched).
-# Use UFW boot infinite timeout workaround for wifi. Default: False.
-ufw_boot_timeout_workaround: false
-
-# Remove UFW boot infinit timeout workaround patch. Default: False.
-ufw_boot_timeout_workaround_unpatch: false
-
 # Enable IPv6 Support. Default: False.
 ufw_ipv6_enable: false
 

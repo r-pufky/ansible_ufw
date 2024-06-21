@@ -3,10 +3,6 @@
 - name: 'Config | enable'
   when: ufw_enable
   block:
-    - name: 'Config | enable | apply bug 990834 986493 workaround'
-      ansible.builtin.include_tasks: bug_990834_986493_workaround.yml
-      when: ufw_boot_timeout_workaround
-
     - name: 'Config | enable | disable IPv6 support'
       ansible.builtin.lineinfile:
         path: '/etc/default/ufw'
