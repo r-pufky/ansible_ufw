@@ -12,7 +12,7 @@
 # Set IP to force connections through a proxy.
 #
 # ufw_group:
-#     list of dict definitions for simplified UFW rules.
+#     list of dict - simplified UFW rules.
 #   - proto: str - TCP/IP protocol
 #         Values:
 #            any: any protocol (default)
@@ -22,33 +22,35 @@
 #            esp: ESP (encapsulation security payload)
 #             ah: AH (authentication header)
 #            gre: GRE (generic route encapsulation)
-#           igmp: IGMP (internet group mamangement protocol)
-#       Default: 'tcp'.
+#           igmp: IGMP (internet group management protocol)
+#         Default: 'tcp'.
 #     from_ip: str - source IPv4/IPv6 address
 #         Special Case:
 #            any: allow all addresses
 #           CIDR: CIDR network
-#       Default: 'any'.
+#         Default: 'any'.
 #     from_port: str - source port
-#         Special Case: ':' may be used for ranges (22:2222).
-#       Default: '' (any).
+#           Special Case:
+#             ':': may be used for ranges (22:2222)
+#         Default: '' (any).
 #     to_ip: str - destination IPv4/IPv6 address
 #         Special Case:
 #            any: allow all addresses
 #           CIDR: CIDR network
-#       Default: 'any'.
+#         Default: 'any'.
 #     to_port: str - destination port
-#         Special Case: ':' may be used for ranges (22:2222).
-#       Default: '' (any).
+#         Special Case:
+#           ':': may be used for ranges (22:2222).
+#         Default: '' (any).
 #     direction: str - direction for rule
 #         Values:
 #            in: incoming connections
 #           out: outgoing connections
-#       Default: 'in'.
+#         Default: 'in'.
 #     log: bool - log connections matching this rule
-#       Default: False.
+#         Default: False.
 #     comment: str - rule description
-#       Default: ''.
+#         Default: ''.
 #
 # Examples:
 #   - proto: 'udp'
@@ -62,7 +64,7 @@
 #     to_port: 123
 #     direction: 'out'
 #     log: true
-#     comment: 'allouw any TCP outbound connections to 123'
+#     comment: 'allow any TCP outbound connections to 123'
 #   - proto: 'tcp'
 #     from_ip: '10.1.1.1'
 #     to_port: 5555
