@@ -1,5 +1,4 @@
 ---
-# yamllint disable rule:line-length
 # Confirm default settings are set to expected values and config loads without
 # error; and group rules are applied before host rules.
 - name: 'Default | verify | role defaults'
