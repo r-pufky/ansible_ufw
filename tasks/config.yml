@@ -1,41 +1,46 @@
 ---
 # yamllint disable rule:line-length
+- name: 'Config | query IPv6 support'
+  ansible.builtin.command: 'sysctl --values net.ipv6.conf.all.disable_ipv6'
+  register: _ufw_ipv6
+  changed_when: false
+
 - name: 'Config | enable'
   when: ufw_enable
   block:
     - name: 'Config | enable | disable IPv6 support'
+      when: _ufw_ipv6.stdout | int == 1
       ansible.builtin.lineinfile:
         path: '/etc/default/ufw'
         regexp: '^IPV6=yes'
         line: 'IPV6=no'
         state: 'present'
       register: _ufw_config
-      when: not ufw_ipv6_enable
 
     - name: 'Config | enable | enable IPv6 support'
+      when: _ufw_ipv6.stdout | int == 0
       ansible.builtin.lineinfile:
         path: '/etc/default/ufw'
         regexp: '^IPV6=no'
         line: 'IPV6=yes'
         state: 'present'
       register: _ufw_config
-      when: ufw_ipv6_enable
 
     - name: 'Config | enable | reload for IP support changes'  # noqa no-handler execute immediately
+      when: _ufw_config.changed
       community.general.ufw:
         state: 'reloaded'
-      when: _ufw_config.changed
 
     - name: 'Config | enable | purge existing configuration'
+      when: ufw_purge
       community.general.ufw:
         state: 'reset'
-      when: ufw_purge
 
     - name: 'Config | enable | disable for setup'
+      when: ufw_disable_for_setup
       community.general.ufw:
         state: 'disabled'
       changed_when: false
-      when: ufw_disable_for_setup
 
     - name: 'Config | enable | set global logging'
       community.general.ufw:
@@ -52,6 +57,7 @@
         direction: 'incoming'
 
     - name: 'Config | enable | set group rules'
+      when: ufw_group
       community.general.ufw:
         direction: '{% if "direction" in item %}{{ item.direction }}{% else %}in{% endif %}'
         from_ip: '{% if "from_ip" in item %}{{ item.from_ip }}{% else %}any{% endif %}'
@@ -63,9 +69,9 @@
         comment: '{% if "comment" in item %}{{ item.comment }}{% else %}r_pufky.srv.ufw default group comment{% endif %}'
         rule: 'allow'
       loop: '{{ ufw_group }}'
-      when: ufw_group
 
     - name: 'Config | enable | set host rules'
+      when: ufw_host
       community.general.ufw:
         direction: '{% if "direction" in item %}{{ item.direction }}{% else %}in{% endif %}'
         from_ip: '{% if "from_ip" in item %}{{ item.from_ip }}{% else %}any{% endif %}'
@@ -77,15 +83,14 @@
         comment: '{% if "comment" in item %}{{ item.comment }}{% else %}r_pufky.srv.ufw default host comment{% endif %}'
         rule: 'allow'
       loop: '{{ ufw_host }}'
-      when: ufw_host
 
     - name: 'Config | enable | enable post setup'
+      when: ufw_disable_for_setup
       community.general.ufw:
         state: 'enabled'
       changed_when: false
-      when: ufw_disable_for_setup
 
 - name: 'Config | disable'
+  when: not ufw_enable
   community.general.ufw:
     state: 'disabled'
-  when: not ufw_enable

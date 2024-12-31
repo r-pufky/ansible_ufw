@@ -4,11 +4,12 @@
 ###############################################################################
 # Manage UFW firewall and proxied firewall configuration.
 
-# Enable UFW. Default: True.
+# Enable UFW.
+#
+# IPv6 automatically enabled based on net.ipv6.conf.all.disable_ipv6 sysctl.
+#
+# Default: True.
 ufw_enable: true
-
-# Enable IPv6 Support. Default: False.
-ufw_ipv6_enable: false
 
 # Default action for outgoing connections.
 #

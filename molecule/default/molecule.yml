@@ -1,4 +1,6 @@
 ---
+# Confirm default settings are set to expected values and config loads without
+# error; and group rules are applied before host rules.
 dependency:
   name: 'galaxy'
 driver:
@@ -11,15 +13,24 @@ provisioner:
       callback_whitelist: 'profile_tasks, timer, yaml'
     ssh_connection:
       pipelining: false
+  inventory:
+    group_vars:
+      all:
+        ufw_host:
+          - proto: 'tcp'
+            from_ip: 'any'
+            to_port: 2222
+            direction: 'in'
+            log: false
+            comment: 'host rule after group rule'
 platforms:
-  - name: 'debian-12'
+  - name: 'ufw-debian-12-default'
     image: 'ghcr.io/hifis-net/debian-systemd:12'
     systemd: 'always'
     volumes:
       - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
     capabilities:
-      - 'SYS_ADMIN'
-      - 'NET_ADMIN'
+      - 'NET_ADMIN'  # iptables (ufw)
     command: '/lib/systemd/systemd'
     pre_build_image: true
 verifier:
@@ -28,3 +39,17 @@ lint: |
   set -e
   yamllint .
   ansible-lint .
+scenario:
+  test_sequence:
+    # - 'dependency'
+    # - 'cleanup'
+    - 'destroy'
+    - 'syntax'
+    - 'create'
+    # - 'prepare'
+    - 'converge'
+    # - 'idempotence'  # ufw config is always removed on deployment.
+    # - 'side_effect'
+    - 'verify'
+    # - 'cleanup'
+    - 'destroy'

@@ -10,6 +10,3 @@ ufw_role_validate_release: 'bookworm'
 # Default packages for UFW.
 ufw_role_packages:
   - 'ufw'
-
-# Default state for apt package installation. See ansible.builtin.apt.
-ufw_role_package_state: 'latest'

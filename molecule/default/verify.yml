@@ -1,7 +1,4 @@
 ---
-# yamllint disable rule:line-length
-# Confirm default settings are set to expected values and config loads without
-# error; and group rules are applied before host rules.
 - name: 'Default | verify | role defaults'
   hosts: 'all'
   gather_facts: false
@@ -45,3 +42,33 @@
           - '"[ 1] 22/tcp" in _test_ufw_status.stdout'
           - '"[ 2] 2222/tcp" in _test_ufw_status.stdout'
         fail_msg: 'Group rule TCP/22 should appear before Host rule TCP/2222.'
+
+# IPv6 support is dependent on container host; determine test based on
+# conatiner sysctl option.
+- name: 'Default | verify | IPv6 configuration correct'
+  hosts: 'all'
+  gather_facts: false
+  tasks:
+    - name: 'Config | query IPv6 support'
+      ansible.builtin.command: 'sysctl --values net.ipv6.conf.all.disable_ipv6'
+      register: _test_ufw_sysctl
+      changed_when: false
+
+    - name: 'Default | verify | query /etc/default/ufw'
+      ansible.builtin.slurp:
+        path: '/etc/default/ufw'
+      register: _test_ufw_ipv6
+
+    - name: 'Default | verify | assert IPv6 disabled'
+      when: _test_ufw_sysctl.stdout | int == 1
+      ansible.builtin.assert:
+        that:
+          - '"IPV6=no" in _test_ufw_ipv6.content | b64decode'
+        fail_msg: '/etc/default/ufw should have IPv6=no when IPv6 is disabled.'
+
+    - name: 'Default | verify | assert IPv6 enabled'
+      when: _test_ufw_sysctl.stdout | int == 0
+      ansible.builtin.assert:
+        that:
+          - '"IPV6=yes" in _test_ufw_ipv6.content | b64decode'
+        fail_msg: '/etc/default/ufw should have IPv6=no when IPv6 is disabled.'
