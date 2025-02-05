@@ -7,6 +7,9 @@
 ufw_role_validate_date: '2024-06-21'
 ufw_role_validate_release: 'bookworm'
 
-# Default packages for UFW.
+###############################################################################
+# APT Packages
+###############################################################################
+
 ufw_role_packages:
   - 'ufw'
