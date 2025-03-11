@@ -13,43 +13,43 @@
 #
 # ufw_group:
 #     list of dict - simplified UFW rules.
-#   - proto: str - TCP/IP protocol
+#   - proto: str - TCP/IP protocol.
 #         Values:
-#            any: any protocol (default)
-#            tcp: TCP
-#            udp: UDP
-#           ipv6: IPv6
-#            esp: ESP (encapsulation security payload)
-#             ah: AH (authentication header)
-#            gre: GRE (generic route encapsulation)
-#           igmp: IGMP (internet group management protocol)
+#            any: Any protocol (default).
+#            tcp: TCP.
+#            udp: UDP.
+#           ipv6: IPv6.
+#            esp: ESP (encapsulation security payload).
+#             ah: AH (authentication header).
+#            gre: GRE (generic route encapsulation).
+#           igmp: IGMP (internet group management protocol).
 #         Default: 'tcp'.
-#     from_ip: str - source IPv4/IPv6 address
+#     from_ip: str - source IPv4/IPv6 address.
 #         Special Case:
-#            any: allow all addresses
-#           CIDR: CIDR network
+#            any: Allow all addresses.
+#           CIDR: CIDR network.
 #         Default: 'any'.
-#     from_port: str - source port
+#     from_port: str - source port.
 #           Special Case:
-#             ':': may be used for ranges (22:2222)
+#             ':': May be used for ranges (22:2222).
 #         Default: '' (any).
-#     to_ip: str - destination IPv4/IPv6 address
+#     to_ip: str - destination IPv4/IPv6 address.
 #         Special Case:
-#            any: allow all addresses
-#           CIDR: CIDR network
+#            any: Allow all addresses.
+#           CIDR: CIDR network.
 #         Default: 'any'.
-#     to_port: str - destination port
+#     to_port: str - destination port.
 #         Special Case:
-#           ':': may be used for ranges (22:2222).
+#           ':': May be used for ranges (22:2222).
 #         Default: '' (any).
-#     direction: str - direction for rule
+#     direction: str - direction for rule.
 #         Values:
-#            in: incoming connections
-#           out: outgoing connections
+#            in: Incoming connections.
+#           out: Outgoing connections.
 #         Default: 'in'.
-#     log: bool - log connections matching this rule
+#     log: bool - log connections matching this rule.
 #         Default: False.
-#     comment: str - rule description
+#     comment: str - rule description.
 #         Default: ''.
 #
 # Examples:
