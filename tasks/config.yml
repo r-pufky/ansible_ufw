@@ -1,5 +1,4 @@
 ---
-# yamllint disable rule:line-length
 - name: 'Config | query IPv6 support'
   ansible.builtin.command: 'sysctl --values net.ipv6.conf.all.disable_ipv6'
   register: _ufw_ipv6
@@ -26,8 +25,8 @@
         state: 'present'
       register: _ufw_config
 
-    - name: 'Config | enable | reload for IP support changes'  # noqa no-handler execute immediately
-      when: _ufw_config.changed
+    - name: 'Config | enable | reload for IP support changes'
+      when: _ufw_config.changed  # noqa no-handler execute immediately
       community.general.ufw:
         state: 'reloaded'
 
@@ -59,28 +58,33 @@
     - name: 'Config | enable | set group rules'
       when: ufw_group
       community.general.ufw:
-        direction: '{% if "direction" in item %}{{ item.direction }}{% else %}in{% endif %}'
-        from_ip: '{% if "from_ip" in item %}{{ item.from_ip }}{% else %}any{% endif %}'
-        from_port: '{% if "from_port" in item %}{{ item.from_port }}{% endif %}'
-        to_ip: '{% if "to_ip" in item %}{{ item.to_ip }}{% else %}any{% endif %}'
+        direction: '{% if "direction" in item %}{{ item.direction }}{% else %}in{% endif %}'  # yamllint disable-line rule:line-length
+        from_ip: '{% if "from_ip" in item %}{{ item.from_ip }}{% else %}any{% endif %}'  # yamllint disable-line rule:line-length
+        from_port:
+          '{% if "from_port" in item %}{{ item.from_port }}{% endif %}'
+        to_ip:
+          '{% if "to_ip" in item %}{{ item.to_ip }}{% else %}any{% endif %}'
         to_port: '{% if "to_port" in item %}{{ item.to_port }}{% endif %}'
-        proto: '{% if "proto" in item %}{{ item.proto }}{% else %}tcp{% endif %}'
+        proto:
+          '{% if "proto" in item %}{{ item.proto }}{% else %}tcp{% endif %}'
         log: '{% if "log" in item %}{{ item.log }}{% else %}false{% endif %}'
-        comment: '{% if "comment" in item %}{{ item.comment }}{% else %}r_pufky.srv.ufw default group comment{% endif %}'
+        comment: '{% if "comment" in item %}{{ item.comment }}{% else %}r_pufky.deb.ufw default group comment{% endif %}'  # yamllint disable-line rule:line-length
         rule: 'allow'
       loop: '{{ ufw_group }}'
 
     - name: 'Config | enable | set host rules'
       when: ufw_host
       community.general.ufw:
-        direction: '{% if "direction" in item %}{{ item.direction }}{% else %}in{% endif %}'
-        from_ip: '{% if "from_ip" in item %}{{ item.from_ip }}{% else %}any{% endif %}'
+        direction: '{% if "direction" in item %}{{ item.direction }}{% else %}in{% endif %}'  # yamllint disable-line rule:line-length
+        from_ip: '{% if "from_ip" in item %}{{ item.from_ip }}{% else %}any{% endif %}'  # yamllint disable-line rule:line-length
         from_port: '{% if "from_port" in item %}{{ item.from_port }}{% endif %}'
-        to_ip: '{% if "to_ip" in item %}{{ item.to_ip }}{% else %}any{% endif %}'
+        to_ip:
+          '{% if "to_ip" in item %}{{ item.to_ip }}{% else %}any{% endif %}'
         to_port: '{% if "to_port" in item %}{{ item.to_port }}{% endif %}'
-        proto: '{% if "proto" in item %}{{ item.proto }}{% else %}tcp{% endif %}'
+        proto:
+          '{% if "proto" in item %}{{ item.proto }}{% else %}tcp{% endif %}'
         log: '{% if "log" in item %}{{ item.log }}{% else %}false{% endif %}'
-        comment: '{% if "comment" in item %}{{ item.comment }}{% else %}r_pufky.srv.ufw default host comment{% endif %}'
+        comment: '{% if "comment" in item %}{{ item.comment }}{% else %}r_pufky.deb.ufw default host comment{% endif %}'  # yamllint disable-line rule:line-length
         rule: 'allow'
       loop: '{{ ufw_host }}'
 

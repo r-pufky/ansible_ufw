@@ -1,6 +1,18 @@
 ---
+###############################################################################
+# Default
+###############################################################################
 # Confirm default settings are set to expected values and config loads without
 # error; and group rules are applied before host rules.
+#
+# Tests:
+# * ufw.service is enabled.'
+# * incoming connections are denied by default.
+# * outgoing connections are allowed by default.
+# * SSH (22/tcp) incoming connections are allowed.
+# * Rule ordering is correct (22 then 2222).
+# * /etc/default/ufw IPv6=no when IPv6 is disabled for the host.
+
 dependency:
   name: 'galaxy'
 driver:

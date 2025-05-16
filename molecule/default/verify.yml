@@ -1,55 +1,51 @@
 ---
-- name: 'Default | verify | role defaults'
+- name: 'Default | verify'
   hosts: 'all'
   gather_facts: false
   tasks:
-    - name: 'Default | verify | role defaults | gather service status'
+    - name: 'Default | verify | gather service status'
       ansible.builtin.service_facts:
       register: _test_ufw_service
 
-    - name: 'Default | verify | role defaults | assert service active'
+    - name: 'Default | verify | assert service active'
       ansible.builtin.assert:
+        quiet: true
         that:
           - '"ufw.service" in ansible_facts.services'
-        fail_msg: 'ufw service should be enabled.'
+        fail_msg: '✘ ufw service should be enabled.'
 
-    - name: 'Default | verify | role defaults | query service'
+    - name: 'Default | verify | query service verbose'
       ansible.builtin.command: 'ufw status verbose'
       changed_when: false
       register: _test_ufw_status
 
-    - name: 'Default | verify | role defaults | assert active and ssh enabled'
+    - name: 'Default | verify | assert active and ssh enabled'
       ansible.builtin.assert:
+        quiet: true
         that:
           - '"deny (incoming)," in _test_ufw_status.stdout'
           - '"allow (outgoing)," in _test_ufw_status.stdout'
           - '"active" in _test_ufw_status.stdout'
           - '"22/tcp" in _test_ufw_status.stdout'
-        fail_msg: 'UFW should be active with SSH allowed from anywhere.'
+        fail_msg: '✘ UFW should be active with SSH allowed from anywhere.'
 
-- name: 'Default | verify | rule ordering'
-  hosts: 'all'
-  gather_facts: false
-  tasks:
-    - name: 'Default | verify | rule ordering | query service'
+    - name: 'Default | verify | query service numbered'
       ansible.builtin.command: 'ufw status numbered'
       changed_when: false
       register: _test_ufw_status
 
-    - name: 'Default | verify | rule ordering | assert correct rule ordering'
+    - name: 'Default | verify | assert correct rule ordering'
       ansible.builtin.assert:
+        quiet: true
         that:
           - '"[ 1] 22/tcp" in _test_ufw_status.stdout'
           - '"[ 2] 2222/tcp" in _test_ufw_status.stdout'
-        fail_msg: 'Group rule TCP/22 should appear before Host rule TCP/2222.'
+        fail_msg: >
+          ✘ Group rule TCP/22 should appear before Host rule TCP/2222.
 
-# IPv6 support is dependent on container host; determine test based on
-# conatiner sysctl option.
-- name: 'Default | verify | IPv6 configuration correct'
-  hosts: 'all'
-  gather_facts: false
-  tasks:
-    - name: 'Config | query IPv6 support'
+    # IPv6 support is dependent on container host; determine test based on
+    # container sysctl option.
+    - name: 'Default | verify | query IPv6 support'
       ansible.builtin.command: 'sysctl --values net.ipv6.conf.all.disable_ipv6'
       register: _test_ufw_sysctl
       changed_when: false
@@ -62,13 +58,17 @@
     - name: 'Default | verify | assert IPv6 disabled'
       when: _test_ufw_sysctl.stdout | int == 1
       ansible.builtin.assert:
+        quiet: true
         that:
           - '"IPV6=no" in _test_ufw_ipv6.content | b64decode'
-        fail_msg: '/etc/default/ufw should have IPv6=no when IPv6 is disabled.'
+        fail_msg: >
+          ✘ /etc/default/ufw should have IPv6=no when IPv6 is disabled.
 
     - name: 'Default | verify | assert IPv6 enabled'
       when: _test_ufw_sysctl.stdout | int == 0
       ansible.builtin.assert:
+        quiet: true
         that:
           - '"IPV6=yes" in _test_ufw_ipv6.content | b64decode'
-        fail_msg: '/etc/default/ufw should have IPv6=no when IPv6 is disabled.'
+        fail_msg: >
+          ✘ /etc/default/ufw should have IPv6=no when IPv6 is disabled.

@@ -80,9 +80,17 @@
 #     comment: 'allow localhost connections to port 123'
 #
 # Default: allow SSH.
-#   - {proto: 'tcp', from_ip: 'any', to_port: 22, direction: 'in', comment: 'ssh'}
+#   - proto: 'tcp'
+#     from_ip: 'any'
+#     to_port: 22
+#     direction: 'in'
+#     comment: 'SSH'
 #
 # Reference:
 # * https://docs.ansible.com/ansible/latest/collections/community/general/ufw_module.html
 ufw_group:
-  - {proto: 'tcp', from_ip: 'any', to_port: 22, direction: 'in', comment: 'ssh'}
+  - proto: 'tcp'
+    from_ip: 'any'
+    to_port: 22
+    direction: 'in'
+    comment: 'SSH'
