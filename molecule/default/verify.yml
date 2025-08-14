@@ -1,25 +1,25 @@
 ---
-- name: 'Default | verify'
+- name: 'Verify'
   hosts: 'all'
   gather_facts: false
   tasks:
-    - name: 'Default | verify | gather service status'
+    - name: 'Verify | gather service status'
       ansible.builtin.service_facts:
       register: _test_ufw_service
 
-    - name: 'Default | verify | assert service active'
+    - name: 'Verify | assert service active'
       ansible.builtin.assert:
         quiet: true
         that:
           - '"ufw.service" in ansible_facts.services'
         fail_msg: '✘ ufw service should be enabled.'
 
-    - name: 'Default | verify | query service verbose'
+    - name: 'Verify | query service verbose'
       ansible.builtin.command: 'ufw status verbose'
       changed_when: false
       register: _test_ufw_status
 
-    - name: 'Default | verify | assert active and ssh enabled'
+    - name: 'Verify | assert active and ssh enabled'
       ansible.builtin.assert:
         quiet: true
         that:
@@ -29,12 +29,12 @@
           - '"22/tcp" in _test_ufw_status.stdout'
         fail_msg: '✘ UFW should be active with SSH allowed from anywhere.'
 
-    - name: 'Default | verify | query service numbered'
+    - name: 'Verify | query service numbered'
       ansible.builtin.command: 'ufw status numbered'
       changed_when: false
       register: _test_ufw_status
 
-    - name: 'Default | verify | assert correct rule ordering'
+    - name: 'Verify | assert correct rule ordering'
       ansible.builtin.assert:
         quiet: true
         that:
@@ -45,17 +45,17 @@
 
     # IPv6 support is dependent on container host; determine test based on
     # container sysctl option.
-    - name: 'Default | verify | query IPv6 support'
+    - name: 'Verify | query IPv6 support'
       ansible.builtin.command: 'sysctl --values net.ipv6.conf.all.disable_ipv6'
       register: _test_ufw_sysctl
       changed_when: false
 
-    - name: 'Default | verify | query /etc/default/ufw'
+    - name: 'Verify | query /etc/default/ufw'
       ansible.builtin.slurp:
         path: '/etc/default/ufw'
       register: _test_ufw_ipv6
 
-    - name: 'Default | verify | assert IPv6 disabled'
+    - name: 'Verify | assert IPv6 disabled'
       when: _test_ufw_sysctl.stdout | int == 1
       ansible.builtin.assert:
         quiet: true
@@ -64,7 +64,7 @@
         fail_msg: >
           ✘ /etc/default/ufw should have IPv6=no when IPv6 is disabled.
 
-    - name: 'Default | verify | assert IPv6 enabled'
+    - name: 'Verify | assert IPv6 enabled'
       when: _test_ufw_sysctl.stdout | int == 0
       ansible.builtin.assert:
         quiet: true
