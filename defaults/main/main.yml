@@ -4,7 +4,7 @@
 ###############################################################################
 # Manage UFW firewall and proxied firewall configuration.
 
-# Enable UFW.
+# Enable UFW?
 #
 # IPv6 automatically enabled based on net.ipv6.conf.all.disable_ipv6 sysctl.
 #
@@ -14,9 +14,9 @@ ufw_enable: true
 # Default action for outgoing connections.
 #
 # Values:
-#    allow: allow connections
-#     deny: deny connections (dropped silently)
-#   reject: reject connections (destination unreachable)
+#    allow: Allow connections.
+#     deny: Deny connections (dropped silently).
+#   reject: Reject connections (destination unreachable).
 #
 # Default: 'allow'.
 ufw_default_outgoing: 'allow'
@@ -24,9 +24,9 @@ ufw_default_outgoing: 'allow'
 # Default action for incoming connections.
 #
 # Values:
-#    allow: allow connections
-#     deny: deny connections (dropped silently)
-#   reject: reject connections (destination unreachable)
+#    allow: Allow connections.
+#     deny: Deny connections (dropped silently).
+#   reject: Reject connections (destination unreachable).
 #
 # Default: 'deny'.
 ufw_default_incoming: 'deny'
@@ -36,16 +36,16 @@ ufw_default_incoming: 'deny'
 # Logged to LOG_KERN syslog.
 #
 # Values:
-#       on: enable
-#      off: disable
-#      low: log blocked packets not matching the defined policy (with rate
-#           limiting), well as packets matching logged rules.
-#   medium: log level low, plus all allowed packets not matching the defined
+#       on: Enable.
+#      off: Disable.
+#      low: Log blocked packets not matching the defined policy (with rate
+#           limiting), well as packets matching logged rules (default).
+#   medium: Log level low, plus all allowed packets not matching the defined
 #           policy, all INVALID packets, and all new connections. All logging
 #           is done with rate limiting.
-#     high: log level medium (without rate limiting), plus all packets with
+#     high: Log level medium (without rate limiting), plus all packets with
 #           rate limiting.
-#     full: log level high without rate limiting
+#     full: Log level high without rate limiting.
 #
 # Default: 'low'.
 ufw_logging: 'low'

@@ -12,7 +12,12 @@
         quiet: true
         that:
           - '"ufw.service" in ansible_facts.services'
-        fail_msg: '✘ ufw service should be enabled.'
+        fail_msg: |
+          ╭───────────────────────────────────────────────────────────────────╮
+          │                                                                   │
+          │                  UFW service should be enabled.                   │
+          │                                                                   │
+          ╰───────────────────────────────────────────────────────────────────╯
 
     - name: 'Verify | query service verbose'
       ansible.builtin.command: 'ufw status verbose'
@@ -27,7 +32,12 @@
           - '"allow (outgoing)," in _test_ufw_status.stdout'
           - '"active" in _test_ufw_status.stdout'
           - '"22/tcp" in _test_ufw_status.stdout'
-        fail_msg: '✘ UFW should be active with SSH allowed from anywhere.'
+        fail_msg: |
+          ╭───────────────────────────────────────────────────────────────────╮
+          │                                                                   │
+          │       UFW should be active with SSH allowed from anywhere.        │
+          │                                                                   │
+          ╰───────────────────────────────────────────────────────────────────╯
 
     - name: 'Verify | query service numbered'
       ansible.builtin.command: 'ufw status numbered'
@@ -40,8 +50,12 @@
         that:
           - '"[ 1] 22/tcp" in _test_ufw_status.stdout'
           - '"[ 2] 2222/tcp" in _test_ufw_status.stdout'
-        fail_msg: >
-          ✘ Group rule TCP/22 should appear before Host rule TCP/2222.
+        fail_msg: |
+          ╭───────────────────────────────────────────────────────────────────╮
+          │                                                                   │
+          │    Group rule TCP/22 should appear before Host rule TCP/2222.     │
+          │                                                                   │
+          ╰───────────────────────────────────────────────────────────────────╯
 
     # IPv6 support is dependent on container host; determine test based on
     # container sysctl option.
@@ -61,8 +75,12 @@
         quiet: true
         that:
           - '"IPV6=no" in _test_ufw_ipv6.content | b64decode'
-        fail_msg: >
-          ✘ /etc/default/ufw should have IPv6=no when IPv6 is disabled.
+        fail_msg: |
+          ╭───────────────────────────────────────────────────────────────────╮
+          │                                                                   │
+          │    /etc/default/ufw should have IPv6=no when IPv6 is disabled.    │
+          │                                                                   │
+          ╰───────────────────────────────────────────────────────────────────╯
 
     - name: 'Verify | assert IPv6 enabled'
       when: _test_ufw_sysctl.stdout | int == 0
@@ -70,5 +88,9 @@
         quiet: true
         that:
           - '"IPV6=yes" in _test_ufw_ipv6.content | b64decode'
-        fail_msg: >
-          ✘ /etc/default/ufw should have IPv6=no when IPv6 is disabled.
+        fail_msg: |
+          ╭───────────────────────────────────────────────────────────────────╮
+          │                                                                   │
+          │    /etc/default/ufw should have IPv6=yes when IPv6 is enabled.    │
+          │                                                                   │
+          ╰───────────────────────────────────────────────────────────────────╯
