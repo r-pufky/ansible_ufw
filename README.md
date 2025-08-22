@@ -35,20 +35,20 @@ host_vars/ufw.example.com/vars/ufw.yml
 ufw_default_outgoing: 'deny'
 ufw_host:
   - proto: 'tcp'
-  from_ip: 'any'
-  to_port: 2222
-  direction: 'in'
-  comment: 'allow incoming to port tcp/2222'
+    from_ip: 'any'
+    to_port: 2222
+    direction: 'in'
+    comment: 'allow incoming to port tcp/2222'
   - proto: 'tcp'
-  to_ip: 'any'
-  to_port: 443
-  direction: 'out'
-  comment: 'allow outgoing to port tcp/443'
+    to_ip: 'any'
+    to_port: 443
+    direction: 'out'
+    comment: 'allow outgoing to port tcp/443'
   - proto: 'tcp'
-  to_ip: 'any'
-  to_port: 22
-  direction: 'out'
-  comment: 'allow outgoing ssh to port tcp/22'
+    to_ip: 'any'
+    to_port: 22
+    direction: 'out'
+    comment: 'allow outgoing ssh to port tcp/22'
 ```
 
 Apply the role
