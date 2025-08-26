@@ -1,4 +1,13 @@
 ---
+###############################################################################
+# UFW Config
+###############################################################################
+# Switching between IPv4 and IPv6 support requires explicitly disabling and
+# then re-enabling the firewall, not just reloading, in Trixie+.
+#
+# Reference:
+# * /etc/default/ufw
+
 - name: 'Config | query IPv6 support'
   ansible.builtin.command: 'sysctl --values net.ipv6.conf.all.disable_ipv6'
   register: _ufw_ipv6
@@ -27,8 +36,14 @@
 
     - name: 'Config | enable | reload for IP support changes'
       when: _ufw_config.changed  # noqa no-handler execute immediately
-      community.general.ufw:
-        state: 'reloaded'
+      block:
+        - name: 'Config | enable | disable for IP support changes'
+          community.general.ufw:
+            state: 'disabled'
+
+        - name: 'Config | enable | enable for IP support changes'
+          community.general.ufw:
+            state: 'enabled'
 
     - name: 'Config | enable | purge existing configuration'
       when: ufw_purge
