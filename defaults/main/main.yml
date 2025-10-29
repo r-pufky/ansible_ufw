@@ -59,7 +59,7 @@ ufw_logging: 'low'
 #
 # Useful if switching between proxy/non-proxy connections:
 #
-#   ansible-playbook site.yml --tags ufw -e 'ufw_disable_for_setup=true'
+#   ansible-playbook site.yml --tags ufw -e '{"ufw_disable_for_setup": true}'
 #
 # Default: True.
 ufw_disable_for_setup: true
@@ -73,7 +73,7 @@ ufw_disable_for_setup: true
 #
 # Useful if switching between proxy/non-proxy connections:
 #
-#   ansible-playbook site.yml --tags ufw -e 'ufw_purge=true'
+#   ansible-playbook site.yml --tags ufw -e '{"ufw_purge": true}'
 #
 # Default: True.
 ufw_purge: true
