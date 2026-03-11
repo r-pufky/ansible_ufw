@@ -4,14 +4,14 @@
 # UFW Firewall (Group Rules)
 ###############################################################################
 # Group rules should be defined in group_vars for general rules to apply to all
-# systems. These are applied first, before ufw_host rules.
+# systems. These are applied first, before ufw_cfg_host rules.
 #
 # UFW can handle IP and CIDR notation. Use 'any' for no restriction on specific
 # direction.
 #
 # Set IP to force connections through a proxy.
 #
-# ufw_group:
+# ufw_cfg_group:
 #     list of dict - Simplified UFW rules.
 #   - proto: str - TCP/IP protocol.
 #         Values:
@@ -88,7 +88,7 @@
 #
 # Reference:
 # * https://docs.ansible.com/ansible/latest/collections/community/general/ufw_module.html
-ufw_group:
+ufw_cfg_group:
   - proto: 'tcp'
     from_ip: 'any'
     to_port: 22

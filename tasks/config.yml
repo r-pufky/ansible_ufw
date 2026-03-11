@@ -8,70 +8,70 @@
 # Reference:
 # * /etc/default/ufw
 
-- name: 'Config | query IPv6 support'
+- name: 'Config | cmd | query IPv6 support'
   ansible.builtin.command: 'sysctl --values net.ipv6.conf.all.disable_ipv6'
-  register: _ufw_ipv6
+  register: ufw__ipv6
   changed_when: false
 
 - name: 'Config | enable'
-  when: ufw_enable
+  when: ufw_srv_enable
   block:
-    - name: 'Config | enable | disable IPv6 support'
-      when: _ufw_ipv6.stdout | int == 1
+    - name: 'Config | filesystem | /etc/default/ufw (disable IPv6 support)'
+      when: ufw__ipv6.stdout | int == 1
       ansible.builtin.lineinfile:
         path: '/etc/default/ufw'
         regexp: '^IPV6=yes'
         line: 'IPV6=no'
         state: 'present'
-      register: _ufw_config
+      register: ufw__config
 
-    - name: 'Config | enable | enable IPv6 support'
-      when: _ufw_ipv6.stdout | int == 0
+    - name: 'Config | filesystem | /etc/default/ufw (enable IPv6 support)'
+      when: ufw__ipv6.stdout | int == 0
       ansible.builtin.lineinfile:
         path: '/etc/default/ufw'
         regexp: '^IPV6=no'
         line: 'IPV6=yes'
         state: 'present'
-      register: _ufw_config
+      register: ufw__config
 
-    - name: 'Config | enable | reload for IP support changes'
-      when: _ufw_config.changed  # noqa no-handler execute immediately
+    - name: 'Config | UFW | reload for IP support changes'
+      when: ufw__config.changed  # noqa no-handler execute immediately.
       block:
-        - name: 'Config | enable | disable for IP support changes'
+        - name: 'Config | UFW | disable for IP support changes'
           community.general.ufw:
             state: 'disabled'
 
-        - name: 'Config | enable | enable for IP support changes'
+        - name: 'Config | UFW | enable for IP support changes'
           community.general.ufw:
             state: 'enabled'
 
-    - name: 'Config | enable | purge existing configuration'
-      when: ufw_purge
+    - name: 'Config | UFW | purge existing configuration'
+      when: ufw_srv_purge
       community.general.ufw:
         state: 'reset'
 
-    - name: 'Config | enable | disable for setup'
-      when: ufw_disable_for_setup
+    - name: 'Config | UFW | disable for setup'
+      when: ufw_srv_disable_for_setup
       community.general.ufw:
         state: 'disabled'
       changed_when: false
 
-    - name: 'Config | enable | set global logging'
+    - name: 'Config | UFW | set global logging'
       community.general.ufw:
-        logging: '{{ ufw_logging | default(false) }}'
+        logging: '{{ ufw_srv_logging | default(false) }}'
 
-    - name: 'Config | enable | default allow outgoing connections'
+    - name: 'Config | UFW | default allow outgoing connections'
       community.general.ufw:
-        default: '{{ ufw_default_outgoing | default("allow") }}'
+        default: '{{ ufw_srv_default_outgoing | default("allow") }}'
         direction: 'outgoing'
 
-    - name: 'Config | enable | default deny incoming connections'
+    - name: 'Config | UFW | default deny incoming connections'
       community.general.ufw:
-        default: '{{ ufw_default_incoming | default("deny") }}'
+        default: '{{ ufw_srv_default_incoming | default("deny") }}'
         direction: 'incoming'
 
-    - name: 'Config | enable | set group rules'
-      when: ufw_group
+    - name: 'Config | UFW | set group rules'
+      when: ufw_cfg_group | length > 0
       community.general.ufw:
         direction: '{% if "direction" in item %}{{ item.direction }}{% else %}in{% endif %}'  # yamllint disable-line rule:line-length
         from_ip: '{% if "from_ip" in item %}{{ item.from_ip }}{% else %}any{% endif %}'  # yamllint disable-line rule:line-length
@@ -85,10 +85,10 @@
         log: '{% if "log" in item %}{{ item.log }}{% else %}false{% endif %}'
         comment: '{% if "comment" in item %}{{ item.comment }}{% else %}r_pufky.deb.ufw default group comment{% endif %}'  # yamllint disable-line rule:line-length
         rule: 'allow'
-      loop: '{{ ufw_group }}'
+      loop: '{{ ufw_cfg_group }}'
 
-    - name: 'Config | enable | set host rules'
-      when: ufw_host
+    - name: 'Config | UFW | set host rules'
+      when: ufw_cfg_host | length > 0
       community.general.ufw:
         direction: '{% if "direction" in item %}{{ item.direction }}{% else %}in{% endif %}'  # yamllint disable-line rule:line-length
         from_ip: '{% if "from_ip" in item %}{{ item.from_ip }}{% else %}any{% endif %}'  # yamllint disable-line rule:line-length
@@ -101,15 +101,15 @@
         log: '{% if "log" in item %}{{ item.log }}{% else %}false{% endif %}'
         comment: '{% if "comment" in item %}{{ item.comment }}{% else %}r_pufky.deb.ufw default host comment{% endif %}'  # yamllint disable-line rule:line-length
         rule: 'allow'
-      loop: '{{ ufw_host }}'
+      loop: '{{ ufw_cfg_host }}'
 
-    - name: 'Config | enable | enable post setup'
-      when: ufw_disable_for_setup
+    - name: 'Config | UFW | enable post setup'
+      when: ufw_srv_disable_for_setup
       community.general.ufw:
         state: 'enabled'
       changed_when: false
 
 - name: 'Config | disable'
-  when: not ufw_enable
+  when: not ufw_srv_enable
   community.general.ufw:
     state: 'disabled'

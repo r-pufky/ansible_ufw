@@ -9,7 +9,7 @@
 # IPv6 automatically enabled based on net.ipv6.conf.all.disable_ipv6 sysctl.
 #
 # Default: True.
-ufw_enable: true
+ufw_srv_enable: true
 
 # Default action for outgoing connections.
 #
@@ -19,7 +19,7 @@ ufw_enable: true
 #   reject: Reject connections (destination unreachable).
 #
 # Default: 'allow'.
-ufw_default_outgoing: 'allow'
+ufw_srv_default_outgoing: 'allow'
 
 # Default action for incoming connections.
 #
@@ -29,7 +29,7 @@ ufw_default_outgoing: 'allow'
 #   reject: Reject connections (destination unreachable).
 #
 # Default: 'deny'.
-ufw_default_incoming: 'deny'
+ufw_srv_default_incoming: 'deny'
 
 # Set global UFW logging level.
 #
@@ -48,7 +48,7 @@ ufw_default_incoming: 'deny'
 #     full: Log level high without rate limiting.
 #
 # Default: 'low'.
-ufw_logging: 'low'
+ufw_srv_logging: 'low'
 
 # Disable UFW while modifying rules?
 #
@@ -59,10 +59,11 @@ ufw_logging: 'low'
 #
 # Useful if switching between proxy/non-proxy connections:
 #
-#   ansible-playbook site.yml --tags ufw -e '{"ufw_disable_for_setup": true}'
+#   ansible-playbook site.yml --tags ufw \
+#     -e '{"ufw_srv_disable_for_setup": true}'
 #
 # Default: True.
-ufw_disable_for_setup: true
+ufw_srv_disable_for_setup: true
 
 # Purge all UFW rules before (re)creating them?
 #
@@ -73,7 +74,7 @@ ufw_disable_for_setup: true
 #
 # Useful if switching between proxy/non-proxy connections:
 #
-#   ansible-playbook site.yml --tags ufw -e '{"ufw_purge": true}'
+#   ansible-playbook site.yml --tags ufw -e '{"ufw_srv_purge": true}'
 #
 # Default: True.
-ufw_purge: true
+ufw_srv_purge: true

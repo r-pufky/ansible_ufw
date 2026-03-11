@@ -1,11 +1,11 @@
 ---
-- name: 'Install packages'
+- name: 'Install | packages'
   ansible.builtin.include_role:
     name: 'r_pufky.deb.apt'
   vars:
     apt_packages:
-      - '{{ ufw_role_packages }}'
-    apt_package_update_cache: true
+      - '{{ ufw___packages }}'
+    apt_srv_package_update_cache: true
 
 - name: 'Config'
-  ansible.builtin.include_tasks: 'config.yml'
+  ansible.builtin.import_tasks: 'config.yml'

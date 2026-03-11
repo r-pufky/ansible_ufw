@@ -28,7 +28,7 @@ provisioner:
   inventory:
     group_vars:
       all:
-        ufw_host:
+        ufw_cfg_host:
           - proto: 'tcp'
             from_ip: 'any'
             to_port: 2222
@@ -36,32 +36,22 @@ provisioner:
             log: false
             comment: 'host rule after group rule'
 platforms:
-  - name: 'ufw-debian-13-default'
+  - name: 'ufw-default'
     image: 'ghcr.io/hifis-net/debian-systemd:13'
     systemd: 'always'
     volumes:
       - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
     capabilities:
-      - 'NET_ADMIN'  # iptables (ufw)
+      - 'NET_ADMIN'  # iptables (ufw).
     command: '/lib/systemd/systemd'
     pre_build_image: true
 verifier:
   name: 'ansible'
-lint: |
-  set -e
-  yamllint .
-  ansible-lint .
 scenario:
   test_sequence:
-    # - 'dependency'
-    # - 'cleanup'
     - 'destroy'
     - 'syntax'
     - 'create'
-    # - 'prepare'
     - 'converge'
-    # - 'idempotence'  # ufw config is always removed on deployment.
-    # - 'side_effect'
     - 'verify'
-    # - 'cleanup'
     - 'destroy'
